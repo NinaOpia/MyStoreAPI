@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MyStoreAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,37 +15,64 @@ namespace MyStoreAPI.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private static List<string> listUsers = new List<string>() { "Nina", "Tina", "Jonah", "Sam" };
+        private static List<UserDataTransferObj> listUsers = new List<UserDataTransferObj>() {
+            new UserDataTransferObj()
+            {
+                Firstname = "Ishi",
+                Lastname = "Peter",
+                Nickname = "PaChristmas",
+                Mobilenumber = "+225557899",
+                Email = "jp@unikblendz.com",
+                Address = "Miami, FL, USA",
+            },
+            new UserDataTransferObj()
+            {
+                Firstname = "Sim",
+                Lastname = "Segun",
+                Nickname = "Serge",
+                Mobilenumber = "+225557898",
+                Email = "so@unikblendz.com",
+                Address = "Miami, FL, USA",
+            }
+        };
 
         [HttpGet]
-        public List<string> GetUsers()
+        public IActionResult GetUsers()
         {
-            return listUsers;
+            if (listUsers.Count > 0)
+            {
+                return Ok(listUsers);
+            }
+
+            return NoContent();
         }
 
         [HttpGet("{id}")]
-        public string GetUser(int id)
+        public IActionResult GetUser(int id)
         {
             if (id >= 0 && id < listUsers.Count)
             {
-                return listUsers[id];
+                return Ok(listUsers[id]);
             }
-            return "";
+            return NotFound();
         }
 
         [HttpPost]
-        public void AddUser(string username)
+        public IActionResult AddUser(UserDataTransferObj user)
         {
-            listUsers.Add(username);
+            listUsers.Add(user);
+            return Ok();
         }
 
         [HttpPut("{id}")]
-        public void UpdateUser(int id, string username)
+        public IActionResult UpdateUser(int id, UserDataTransferObj user)
         {
             if(id >= 0 && id < listUsers.Count)
             {
-                listUsers[id] = username;
+                listUsers[id] = user;
             }
+
+            return Ok();
         }
 
         // DELETE api/values/5
